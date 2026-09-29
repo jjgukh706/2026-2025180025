@@ -57,6 +57,15 @@ def draw_character(draw, w, h, pose):
     limb(draw, shoulder_x, shoulder_y, hand_b[0], hand_b[1], 5, SKIN)
     limb(draw, shoulder_x, shoulder_y, hand_a[0], hand_a[1], 5, SKIN)
 
+    if pose.get('sword') is not None:
+        angle = math.radians(pose['sword'])
+        length = pose.get('sword_len', 26)
+        tip = (hand_a[0] + math.cos(angle) * length,
+               hand_a[1] - math.sin(angle) * length)
+        limb(draw, hand_a[0], hand_a[1], tip[0], tip[1], 4, METAL)
+        draw.polygon([(tip[0] - 3, tip[1] + 3), (tip[0] + 3, tip[1] + 3),
+                      (tip[0] + 1, tip[1] - 4), (tip[0] - 1, tip[1] - 4)], fill=METAL)
+
     head_x = shoulder_x + 1
     head_y = shoulder_y - 8
     draw.ellipse([head_x - 7, head_y - 7, head_x + 7, head_y + 7], fill=SKIN)
@@ -125,6 +134,24 @@ def build_run(total=6):
     return frames, [(FRAME_W, FRAME_H)] * total
 
 
+ATTACK_KEYS = [
+    {'leg_a': (7, 0), 'leg_b': (-8, 0), 'arm_a': (-2, 0), 'arm_b': (2, 0), 'lean': -2, 'sword': 150, 'sword_len': 22},
+    {'leg_a': (9, 0), 'leg_b': (-10, 0), 'arm_a': (-4, -2), 'arm_b': (4, 0), 'lean': -4, 'sword': 175, 'sword_len': 24},
+    {'leg_a': (11, 0), 'leg_b': (-12, 0), 'arm_a': (2, -4), 'arm_b': (6, 0), 'lean': -5, 'sword': 200, 'sword_len': 26},
+    {'leg_a': (12, 0), 'leg_b': (-13, 0), 'arm_a': (10, -6), 'arm_b': (8, 0), 'lean': -4, 'sword': 230, 'sword_len': 30},
+    {'leg_a': (10, 0), 'leg_b': (-11, 0), 'arm_a': (16, -4), 'arm_b': (7, 0), 'lean': 0, 'sword': 265, 'sword_len': 32},
+    {'leg_a': (6, 0), 'leg_b': (-7, 0), 'arm_a': (14, 0), 'arm_b': (4, 0), 'lean': 3, 'sword': 300, 'sword_len': 30},
+    {'leg_a': (4, 0), 'leg_b': (-5, 0), 'arm_a': (8, 2), 'arm_b': (2, 0), 'lean': 2, 'sword': 330, 'sword_len': 26},
+    {'leg_a': (3, 0), 'leg_b': (-4, 0), 'arm_a': (2, 0), 'arm_b': (1, 0), 'lean': 1, 'sword': 20, 'sword_len': 24},
+    {'leg_a': (4, 0), 'leg_b': (-5, 0), 'arm_a': (0, 0), 'arm_b': (0, 0), 'lean': 0, 'sword': 60, 'sword_len': 22},
+    {'leg_a': (5, 0), 'leg_b': (-6, 0), 'arm_a': (0, 0), 'arm_b': (0, 0), 'lean': 0, 'sword': 90, 'sword_len': 20},
+]
+
+
+def attack_pose(i, total):
+    return ATTACK_KEYS[i % len(ATTACK_KEYS)]
+
+
 def build_jump(total=6):
     frames = []
     sizes = []
@@ -138,6 +165,18 @@ def build_jump(total=6):
         frame.paste(body, (0, rise), body)
         frames.append(frame)
         sizes.append(size)
+    return frames, sizes
+
+
+def build_attack(total=10):
+    frames = []
+    sizes = []
+    for i in range(total):
+        pose = attack_pose(i, total)
+        frame = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
+        draw_character(ImageDraw.Draw(frame), FRAME_W, FRAME_H, pose)
+        frames.append(frame)
+        sizes.append((FRAME_W, FRAME_H))
     return frames, sizes
 
 
@@ -172,3 +211,6 @@ if __name__ == '__main__':
     elif target == 'jump':
         frames, sizes = build_jump()
         save_sheet('jump', frames, sizes)
+    elif target == 'attack':
+        frames, sizes = build_attack()
+        save_sheet('attack', frames, sizes)
