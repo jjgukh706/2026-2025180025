@@ -187,10 +187,16 @@ def build_attack(total=10):
     sizes = []
     for i in range(total):
         pose = attack_pose(i, total)
-        frame = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
-        draw_character(ImageDraw.Draw(frame), FRAME_W, FRAME_H, pose)
+        reach = abs(pose['arm_a'][0]) + pose['sword_len']
+        width = 64 + int(reach * 0.9)
+        height = 64
+        body = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
+        draw_character(ImageDraw.Draw(body), FRAME_W, FRAME_H, pose)
+        frame = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+        offset = (width - FRAME_W) // 2
+        frame.paste(body, (offset, 0), body)
         frames.append(frame)
-        sizes.append((FRAME_W, FRAME_H))
+        sizes.append((width, height))
     return frames, sizes
 
 
