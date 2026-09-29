@@ -12,6 +12,12 @@ DRAW_H = 64 * SCALE
 REPEAT = 5
 PAUSE = 1.0
 
+# Every animation is stored as a list of frame rectangles
+# (left, bottom, width, height) instead of a single frame size, so a sheet
+# whose frames differ in size is played back exactly the same way.
+#   - jump  : frame height changes (64 / 68 / 72 / 74 / 78)
+#   - attack: frame width changes (82 ... 107, follows the sword reach)
+# Frame counts also differ per animation (4 / 8 / 6 / 6 / 10).
 WALK_FRAMES = [(i * 64, 0, 64, 64) for i in range(8)]
 RUN_FRAMES = [(i * 64, 0, 64, 64) for i in range(6)]
 JUMP_FRAMES = [(0, 0, 64, 64), (64, 0, 64, 68), (128, 0, 64, 74),
