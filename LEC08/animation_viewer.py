@@ -14,6 +14,10 @@ DRAW_W = FRAME_W * SCALE
 DRAW_H = FRAME_H * SCALE
 
 walk_sheet = load_image('sprites/walk.png')
+run_sheet = load_image('sprites/run.png')
+jump_sheet = load_image('sprites/jump.png')
+attack_sheet = load_image('sprites/attack.png')
+idle_sheet = load_image('sprites/idle.png')
 label = load_font('consola.ttf', 30)
 
 
