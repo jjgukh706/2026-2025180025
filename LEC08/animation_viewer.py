@@ -22,6 +22,7 @@ while True:
     clear_canvas()
     draw_frame(walk_sheet, index, 400, 300)
     update_canvas()
+    delay(0.1)
     index = (index + 1) % 8
 
 
