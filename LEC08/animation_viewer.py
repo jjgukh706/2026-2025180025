@@ -9,12 +9,16 @@ open_canvas(800, 600)
 
 FRAME_W = 64
 FRAME_H = 64
+SCALE = 5
+DRAW_W = FRAME_W * SCALE
+DRAW_H = FRAME_H * SCALE
 
 walk_sheet = load_image('sprites/walk.png')
 
 
 def draw_frame(sheet, index, x, y):
-    sheet.clip_draw(index * FRAME_W, 0, FRAME_W, FRAME_H, x, y)
+    sheet.clip_draw(index * FRAME_W, 0, FRAME_W, FRAME_H,
+                    x, y, DRAW_W, DRAW_H)
 
 
 index = 0
