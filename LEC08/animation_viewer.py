@@ -8,6 +8,8 @@ from pico2d import *
 open_canvas(800, 600)
 
 SCALE = 5
+REPEAT = 5
+PAUSE = 1.0
 
 WALK_FRAMES = [(i * 64, 0, 64, 64) for i in range(8)]
 RUN_FRAMES = [(i * 64, 0, 64, 64) for i in range(6)]
@@ -34,19 +36,37 @@ def draw_frame(sheet, frame, x, y):
 
 anim_index = 0
 frame_index = 0
+repeat_count = 0
+pausing = False
 
 while True:
     clear_canvas()
     name, sheet, frames, interval = ANIMATIONS[anim_index]
-    draw_frame(sheet, frames[frame_index], 400, 300)
-    label.draw(400, 560, '%s  frame %d / %d' % (name, frame_index + 1, len(frames)),
-               (255, 255, 255))
+
+    if pausing:
+        label.draw(400, 300, name, (255, 255, 0))
+    else:
+        draw_frame(sheet, frames[frame_index], 400, 300)
+        label.draw(400, 560, '%s  frame %d / %d  (loop %d / %d)' %
+                   (name, frame_index + 1, len(frames), repeat_count + 1, REPEAT),
+                   (255, 255, 255))
+
     update_canvas()
-    delay(interval)
-    frame_index += 1
-    if frame_index >= len(frames):
-        frame_index = 0
+
+    if pausing:
+        delay(PAUSE)
+        pausing = False
         anim_index = (anim_index + 1) % len(ANIMATIONS)
+        frame_index = 0
+        repeat_count = 0
+    else:
+        delay(interval)
+        frame_index += 1
+        if frame_index >= len(frames):
+            frame_index = 0
+            repeat_count += 1
+            if repeat_count >= REPEAT:
+                pausing = True
 
 
 close_canvas()
