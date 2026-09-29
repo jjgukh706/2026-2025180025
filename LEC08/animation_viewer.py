@@ -11,6 +11,10 @@ SCALE = 5
 DRAW_H = 64 * SCALE
 REPEAT = 5
 PAUSE = 1.0
+CENTER_X = 400
+CENTER_Y = 300
+BAR_W = 600
+BAR_Y = 40
 
 # Every animation is stored as a list of frame rectangles
 # (left, bottom, width, height) instead of a single frame size, so a sheet
@@ -57,18 +61,18 @@ while True:
     name, sheet, frames, interval = ANIMATIONS[anim_index]
 
     if pausing:
-        label.draw(400, 300, name, (255, 255, 0))
+        label.draw(CENTER_X, CENTER_Y, name, (255, 255, 0))
     else:
-        draw_frame(sheet, frames[frame_index], 400, 300)
-        label.draw(400, 560, '%s  frame %d / %d  (loop %d / %d)' %
+        draw_frame(sheet, frames[frame_index], CENTER_X, CENTER_Y)
+        label.draw(CENTER_X, 560, '%s  frame %d / %d  (loop %d / %d)' %
                    (name, frame_index + 1, len(frames), repeat_count + 1, REPEAT),
                    (255, 255, 255))
 
-    bar_w = 600
-    draw_rectangle(400 - bar_w / 2, 40, 400 + bar_w / 2, 52, 80, 80, 80)
     progress = (anim_index + frame_index / len(frames)) / len(ANIMATIONS)
-    draw_rectangle(400 - bar_w / 2, 40,
-                   400 - bar_w / 2 + bar_w * progress, 52,
+    draw_rectangle(CENTER_X - BAR_W / 2, BAR_Y,
+                   CENTER_X + BAR_W / 2, BAR_Y + 12, 80, 80, 80)
+    draw_rectangle(CENTER_X - BAR_W / 2, BAR_Y,
+                   CENTER_X - BAR_W / 2 + BAR_W * progress, BAR_Y + 12,
                    0, 200, 120)
 
     update_canvas()
