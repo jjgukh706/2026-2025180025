@@ -51,7 +51,19 @@ while True:
                    (name, frame_index + 1, len(frames), repeat_count + 1, REPEAT),
                    (255, 255, 255))
 
+    bar_w = 600
+    draw_rectangle(400 - bar_w / 2, 40, 400 + bar_w / 2, 52, 80, 80, 80)
+    progress = (anim_index + frame_index / len(frames)) / len(ANIMATIONS)
+    draw_rectangle(400 - bar_w / 2, 40,
+                   400 - bar_w / 2 + bar_w * progress, 52,
+                   0, 200, 120)
+
     update_canvas()
+
+    for event in get_events():
+        if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            close_canvas()
+            exit()
 
     if pausing:
         delay(PAUSE)
