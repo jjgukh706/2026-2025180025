@@ -14,6 +14,7 @@ DRAW_W = FRAME_W * SCALE
 DRAW_H = FRAME_H * SCALE
 
 walk_sheet = load_image('sprites/walk.png')
+label = load_font('consola.ttf', 30)
 
 
 def draw_frame(sheet, index, x, y):
@@ -25,6 +26,7 @@ index = 0
 while True:
     clear_canvas()
     draw_frame(walk_sheet, index, 400, 300)
+    label.draw(400, 560, 'walk  frame %d / 8' % index, (255, 255, 255))
     update_canvas()
     delay(0.1)
     index = (index + 1) % 8
