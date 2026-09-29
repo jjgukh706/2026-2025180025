@@ -4,159 +4,170 @@
 - 폴더: `LEC08/`
 - 소스: `LEC08/animation_viewer.py`
 - 라이브러리: pico2d
-- 상태: 계획 수립 완료 / 구현 대기
+- 상태: **구현 완료** (요구사항 전부 충족, 보너스 2개 포함)
 
 ---
 
-## 1. 과제 요구사항 (채점 기준)
+## 1. 실행 방법
 
-| 항목 | 요구 | 배점 | 상태 |
+```
+cd LEC08
+python animation_viewer.py
+```
+
+ESC 키로 종료.
+
+---
+
+## 2. 과제 요구사항 대비
+
+| 항목 | 요구 | 상태 | 구현 |
 |---|---|---|---|
-| 애니메이션 종류 | 4종 이상 (걷기, 뛰기, 점프, 공격 등) | 2 | ☐ |
-| 정확한 재생 | 스프라이트 시트 기준 프레임 순서대로 재생 | 2 | ☐ |
-| 확대 표시 | 캐릭터가 화면 절반 이상 차지 | 1 | ☐ |
-| 무한 반복 | 전 애니메이션을 차례로 무한 반복 | 1 | ☐ |
-| 보너스 A | 프레임마다 크기가 다른 스프라이트 시트 | +2 | ☐ |
-| 보너스 B | 애니메이션별 프레임 수가 서로 다른 경우 | +2 | ☐ |
-| 파일 위치 | `LEC08/animation_viewer.py` | 필수 | ☐ |
-| 커밋 | 로그 20개 이상, 각각 의미 있게 | 필수 | ☐ |
+| 애니메이션 종류 | 4종 이상 | ✅ **5종** | idle, walk, run, jump, attack |
+| 정확한 재생 | 프레임 순서대로 | ✅ | `clip_draw`로 시트 프레임 순차 재생 |
+| 확대 표시 | 화면 절반 이상 | ✅ | `SCALE = 5` → 320px (화면 세로 53%) |
+| 무한 반복 | 전 애니메이션 무한 반복 | ✅ | 마지막 후 `anim_index` 가 첫 번째로 |
+| 5회 반복 + 1초 정지 | 각 애니메이션마다 | ✅ | `REPEAT = 5`, `PAUSE = 1.0` |
+| 파일 위치 | `LEC08/animation_viewer.py` | ✅ | |
+| 커밋 20개 이상 | 필수 | ✅ | 20개 (Drill #8 기준) |
+| 보너스 A | 프레임마다 크기가 다른 시트 | ✅ | jump(높이 변화), attack(폭 변화) |
+| 보너스 B | 애니메이션별 프레임 수 상이 | ✅ | 4 / 8 / 6 / 6 / 10 |
 
-### 재생 방식 상세
-1. 화면 중앙에서 애니메이션 재생
-2. 각 애니메이션 5회 반복
-3. 1회 반복을 마치면 1초 정지
-4. 모든 애니메이션을 순서대로 무한 반복
+### 제출 시 Mention 할 내용 (보너스)
+
+**보너스 A — 프레임 크기가 프레임마다 다른 스프라이트 시트**
+
+애니메이션을 단일 프레임 크기가 아니라 **프레임 사각형 리스트**로 저장했습니다.
+`(left, bottom, width, height)` 형태이므로 프레임마다 크기가 달라도 동일하게 재생됩니다.
+
+- `jump` — 프레임 높이가 5종으로 변함 (64 / 68 / 72 / 74 / 78). 캐릭터가 도약하며 상승
+- `attack` — 프레임 폭이 9종으로 변함 (82 / 83 / 85 / 87 / 89 / 94 / 100 / 103 / 107). 검의 길이에 따라 시트 프레임 폭이 달라짐
+
+`draw_frame()`에서 `draw_h - DRAW_H` 만큼 y를 보정해, 프레임 높이가 달라도 캐릭터의 바닥 위치가 흔들리지 않고 화면 중앙에 정렬됩니다.
+
+**보너스 B — 애니메이션별 프레임 수가 서로 다른 경우**
+
+프레임 수를 하드코딩하지 않고 `len(frames)`로 계산하므로 애니메이션마다 다른 프레임 수를 지원합니다.
+
+| 애니메이션 | 프레임 수 | 프레임 크기 |
+|---|---|---|
+| idle | 4 | 64×64 |
+| walk | 8 | 64×64 |
+| run | 6 | 64×64 |
+| jump | 6 | 64×64 ~ 64×78 (높이 가변) |
+| attack | 10 | 82×64 ~ 107×64 (폭 가변) |
 
 ---
 
-## 2. 파일 구성 계획
+## 3. 파일 구성
 
 ```
 LEC08/
 ├── animation_viewer.py   # 메인 프로그램
-├── sprites/              # 스프라이트 시트 원본
-│   └── walk.png
-├── tools/                # 시트 생성/점검 스크립트 (개발용)
-│   └── make_sheet.py
-└── PROGRESS.md           # 본 문서
+├── PROGRESS.md           # 본 문서
+├── fonts/
+│   └── consola.ttf       # 라벨 표시용 폰트
+├── sprites/
+│   ├── idle.png          (256×64,  4프레임)
+│   ├── walk.png          (512×64,  8프레임)
+│   ├── run.png           (384×64,  6프레임)
+│   ├── jump.png          (384×78,  6프레임, 높이 가변)
+│   └── attack.png        (919×64, 10프레임, 폭 가변)
+└── tools/
+    └── make_sheet.py     # 스프라이트 시트 생성 스크립트
 ```
 
----
+### 스프라이트 시트 생성
 
-## 3. 커밋 계획 (20개 이상)
+```
+cd LEC08
+python tools/make_sheet.py all
+```
 
-한 커밋 = 동작 하나. 각 커밋은 실행 가능한 상태를 유지한다.
+개별 생성: `walk` / `run` / `jump` / `attack` / `idle`
 
-| # | 커밋 메시지 | 내용 |
-|---|---|---|
-| 1 | `LEC08: 폴더 및 진행 문서 구성` | 폴더 생성, 본 문서 추가 |
-| 2 | `add LEC08 project metadata to gitignore` | 생성물 제외 규칙 |
-| 3 | `open 800x600 canvas for animation viewer` | 캔버스 생성 |
-| 4 | `load walk sprite sheet image` | 이미지 1장 로드 |
-| 5 | `clip_draw helper to cut single frame` | 클리핑 드로우 헬퍼 |
-| 6 | `play walk animation frames in order` | 걷기 프레임 순차 재생 |
-| 7 | `add frame delay for walk animation` | 프레임 간 지연 |
-| 8 | `draw character at canvas center` | 중앙 정렬 |
-| 9 | `scale sprite sheet up to half of screen` | 확대 배율 적용 |
-| 10 | `add run sprite sheet asset` | 뛰기 시트 추가 |
-| 11 | `add jump sprite sheet asset` | 점프 시트 추가 |
-| 12 | `add attack sprite sheet asset` | 공격 시트 추가 |
-| 13 | `collect animation definitions into list` | 애니메이션 목록화 |
-| 14 | `loop over animations in sequence` | 애니메이션 순차 재생 |
-| 15 | `repeat each animation 5 times` | 5회 반복 제어 |
-| 16 | `pause 1 second after each animation` | 전환 정지 |
-| 17 | `restart sequence after last animation` | 무한 반복 |
-| 18 | `show current animation name on screen` | 현재 애니메이션 라벨 |
-| 19 | `support per-frame width and height` | 프레임별 크기 가변 (보너스 A) |
-| 20 | `support different frame count per animation` | 애니메이션별 프레임 수 (보너스 B) |
-| 21 | `load sprite sheets with transparency key` | 투명 배경 처리 |
-| 22 | `update PROGRESS with bonus features done` | 문서 갱신 |
-| 23 | `final review of animation viewer` | 최종 정리 |
-
-> 현재 저장소 커밋 7개. Drill #8 에서 최소 13개 이상 추가해 20개 이상을 확보한다.
+PIL로 캐릭터(머리·몸통·팔·다리·검)를 프레임마다 다른 포즈로 렌더링해
+가로로 이어 붙인 시트를 만듭니다. `draw_character()`가 관절 좌표를
+`{'leg_a': (x, lift), ...}` 형태의 pose 딕셔너리로 받아 포즈를 정의합니다.
 
 ---
 
-## 4. 구현 순서 (Phase)
+## 4. 커밋 기록 (Drill #8, 20개)
+
+| # | 커밋 메시지 |
+|---|---|
+| 1 | add LEC08 animation viewer progress document |
+| 2 | add sprite sheet tool and walk animation |
+| 3 | add run animation sprite sheet |
+| 4 | add jump animation with varying frame heights |
+| 5 | add attack animation with sword swing |
+| 6 | add idle animation and batch sheet build mode |
+| 7 | open canvas for animation viewer |
+| 8 | load walk sprite sheet |
+| 9 | add clip_draw helper and play walk frames |
+| 10 | add frame delay to walk animation |
+| 11 | scale character up to fill over half of screen |
+| 12 | show animation name and frame index on screen |
+| 13 | load run jump attack and idle sprite sheets |
+| 14 | collect animations into table with frame rectangles |
+| 15 | play animations in sequence and loop back to first |
+| 16 | repeat each animation 5 times with 1 second pause |
+| 17 | add sequence progress bar and escape key exit |
+| 18 | support per frame size for attack and jump sheets |
+| 19 | document bonus frame size and frame count support |
+| 20 | bundle font file and use absolute path for load_font |
+| 21 | extract layout constants for canvas position and progress bar |
+
+---
+
+## 5. 구현 흐름
 
 ### Phase 0 — 준비
-- [x] LEC08 폴더 생성
-- [x] 진행 문서 작성
-- [ ] .gitignore에 생성물(임시 이미지) 추가
+- [x] LEC08 폴더 및 진행 문서
+- [x] 스프라이트 시트 생성 도구 (`tools/make_sheet.py`)
+- [x] 5종 시트 생성
 
-### Phase 1 — 스프라이트 시트 확보
-- [ ] 제작 방법 결정 (PIL 직접 생성 / 무료 이미지 검색)
-- [ ] 4종 시트 확보 (걷기 / 뛰기 / 점프 / 공격)
-- [ ] 프레임 수·프레임 크기 표 작성
-- [ ] `tools/make_sheet.py` 로 시트 생성 또는 검색 결과 저장
-- [ ] 투명 배경(PNG) 확인
+### Phase 1 — 단일 애니메이션
+- [x] 캔버스 + 시트 로드
+- [x] `clip_draw(left, bottom, w, h, x, y, w, h)` 헬퍼
+- [x] 걷기 프레임 인덱스 증가
+- [x] `delay()` 로 프레임 속도 조절
+- [x] 중앙 좌표에 그리기
+- [x] 5배 확대 (화면 세로 53%)
 
-| 애니메이션 | 프레임 수 | 프레임 크기 | 확대 배율 |
-|---|---|---|---|
-| 걷기 (walk) | 8 | 64×64 | 4.0 |
-| 뛰기 (run) | 8 | 64×64 | 4.0 |
-| 점프 (jump) | 6 | 64×64 | 4.0 |
-| 공격 (attack) | 10 | 64×64 | 4.0 |
+### Phase 2 — 다중 애니메이션
+- [x] 애니메이션 정의를 테이블로 구조화
+- [x] 순차 재생 + 첫 번째로 복귀
+- [x] 5회 반복 카운터
+- [x] 전환 시 1초 정지
+- [x] 현재 애니메이션/프레임/반복 횟수 라벨
+- [x] 전체 진행 표시줄
+- [x] ESC 종료
 
-> 64×64 × 4 = 256px → 800×600 화면에서 세로 42%, 가로 32%. "화면 절반 이상" 충족 여부는 실행 화면으로 확인 후 배율 조정.
+### Phase 3 — 보너스
+- [x] 프레임 사각형 리스트 구조 (jump 높이 가변, attack 폭 가변)
+- [x] `len(frames)` 로 애니메이션별 프레임 수 대응
+- [x] 프레임 높이 차이 중앙 정렬 보정
 
-### Phase 2 — 단일 애니메이션 재생
-- [ ] 캔버스 + 시트 로드
-- [ ] `clip_draw(left, top, w, h, x, y, w, h)` 헬퍼
-- [ ] 걷기 프레임 인덱스 증가
-- [ ] `delay()` 로 프레임 속도 조절
-- [ ] 중앙 좌표 계산
-
-### Phase 3 — 확대
-- [ ] 확대 배율 상수 적용
-- [ ] 프레임 사각형(바닥 정렬) 유지 확인
-
-### Phase 4 — 다중 애니메이션 + 무한 반복
-- [ ] 애니메이션 정의 리스트
-- [ ] 5회 반복 카운터
-- [ ] 전환 시 1초 정지
-- [ ] 마지막 애니메이션 후 처음부터
-
-### Phase 5 — 보너스
-- [ ] 프레임마다 크기가 다른 시트 지원
-- [ ] 애니메이션별 프레임 수 상이 처리
-- [ ] 라벨 표시
-
-### Phase 6 — 마무리
-- [ ] 실행 확인 및 FPS 점검
-- [ ] 커밋 20개 이상 달성
-- [ ] 문서 최종 갱신
+### Phase 4 — 마무리
+- [x] 폰트 번들링 및 절대 경로 로드
+- [x] 상수 추출 (`CENTER_X/Y`, `BAR_W/Y`)
+- [x] 커밋 20개 이상
+- [x] 12초 연속 실행 크래시 없음 검증
+- [x] 헤드리스 시뮬레이션으로 순서 검증 (5회 반복 → 1초 정지 → 다음 → 무한)
 
 ---
 
-## 5. 핵심 API 메모 (pico2d)
+## 6. pico2d API 메모
 
 ```python
-open_canvas(800, 600)
-img = load_image('sprites/walk.png')
-
-# 시트에서 한 프레임만 잘라서 그리기
-img.clip_draw(left, top, w, h, x, y, dw, dh)   # dw, dh = 확대된 크기
-
-clear_canvas()
-update_canvas()
-delay(0.1)          # 1초 정지
-delay(0.08)         # 프레임 간 지연
-
-# 프레임 좌표 계산
-left = index * FRAME_W
-top  = 0
+img.clip_draw(left, bottom, width, height, x, y, w, h)
+#        └── 시트 내 좌표 (왼쪽 아래 기준) ──┘  └화면좌표┘ └확대┘
 ```
 
-주의: `Image.clip_draw(left, top, width, height, x, y, w, h)` — 앞 4개는 원본 시트 내 좌표, 뒤 3개는 화면 좌표와 크기.
-
----
-
-## 6. 결정 필요 사항
-
-- [ ] 스프라이트 시트를 직접(PIL) 생성할지, 무료 이미지 검색 결과로 쓸지
-- [ ] 보너스 A(프레임별 크기 가변)를 실제 시트로 구현할지
-- [ ] 애니메이션 라벨 텍스트를 화면에 표시할지 (pico2d `load_font` 필요)
+- 시트 좌표의 `bottom`은 **왼쪽 아래 기준** (pico2d가 `self.h - bottom - height`로 변환)
+- `load_font`는 SDL이 경로를 해석하므로 `os.path.abspath()` 필요
+- 더미 비디오 드라이버(`SDL_VIDEODRIVER=dummy`)에서는 `load_image`가 실패하므로 로직 검증 시 스텁 처리
 
 ---
 
