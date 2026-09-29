@@ -78,11 +78,35 @@ def walk_pose(i, total):
     }
 
 
+def run_pose(i, total):
+    p = 2 * math.pi * i / total
+    swing = 14 * math.sin(p) + 3 * math.sin(2 * p)
+    swing_b = 14 * math.sin(p + math.pi) + 3 * math.sin(2 * p + math.pi)
+    lift_a = max(0, 5 * math.sin(2 * p + math.pi / 2))
+    lift_b = max(0, 5 * math.sin(2 * p - math.pi / 2))
+    return {
+        'leg_a': (swing, int(lift_a)),
+        'leg_b': (swing_b, int(lift_b)),
+        'arm_a': (-swing * 0.9, -3),
+        'arm_b': (swing_b * 0.9, -3),
+        'lean': 3,
+    }
+
+
 def build_walk(total=8):
     frames = []
     for i in range(total):
         frame = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
         draw_character(ImageDraw.Draw(frame), FRAME_W, FRAME_H, walk_pose(i, total))
+        frames.append(frame)
+    return frames, [(FRAME_W, FRAME_H)] * total
+
+
+def build_run(total=6):
+    frames = []
+    for i in range(total):
+        frame = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
+        draw_character(ImageDraw.Draw(frame), FRAME_W, FRAME_H, run_pose(i, total))
         frames.append(frame)
     return frames, [(FRAME_W, FRAME_H)] * total
 
@@ -112,3 +136,6 @@ if __name__ == '__main__':
     if target == 'walk':
         frames, sizes = build_walk()
         save_sheet('walk', frames, sizes)
+    elif target == 'run':
+        frames, sizes = build_run()
+        save_sheet('run', frames, sizes)
