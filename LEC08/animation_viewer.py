@@ -36,7 +36,7 @@ ANIMATIONS = [
     ('attack', load_image('sprites/attack.png'), ATTACK_FRAMES, 0.06),
 ]
 
-label = load_font('consola.ttf', 30)
+label = load_font(os.path.abspath('fonts/consola.ttf'), 28)
 
 
 def draw_frame(sheet, frame, x, y):
