@@ -32,17 +32,21 @@ def draw_frame(sheet, frame, x, y):
     sheet.clip_draw(left, bottom, w, h, x, y, w * SCALE, h * SCALE)
 
 
-name, sheet, frames, interval = ANIMATIONS[0]
+anim_index = 0
+frame_index = 0
 
-index = 0
 while True:
     clear_canvas()
-    draw_frame(sheet, frames[index], 400, 300)
-    label.draw(400, 560, '%s  frame %d / %d' % (name, index + 1, len(frames)),
+    name, sheet, frames, interval = ANIMATIONS[anim_index]
+    draw_frame(sheet, frames[frame_index], 400, 300)
+    label.draw(400, 560, '%s  frame %d / %d' % (name, frame_index + 1, len(frames)),
                (255, 255, 255))
     update_canvas()
     delay(interval)
-    index = (index + 1) % len(frames)
+    frame_index += 1
+    if frame_index >= len(frames):
+        frame_index = 0
+        anim_index = (anim_index + 1) % len(ANIMATIONS)
 
 
 close_canvas()
