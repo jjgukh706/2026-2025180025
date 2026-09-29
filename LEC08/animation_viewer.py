@@ -7,33 +7,42 @@ from pico2d import *
 
 open_canvas(800, 600)
 
-FRAME_W = 64
-FRAME_H = 64
 SCALE = 5
-DRAW_W = FRAME_W * SCALE
-DRAW_H = FRAME_H * SCALE
 
-walk_sheet = load_image('sprites/walk.png')
-run_sheet = load_image('sprites/run.png')
-jump_sheet = load_image('sprites/jump.png')
-attack_sheet = load_image('sprites/attack.png')
-idle_sheet = load_image('sprites/idle.png')
+WALK_FRAMES = [(i * 64, 0, 64, 64) for i in range(8)]
+RUN_FRAMES = [(i * 64, 0, 64, 64) for i in range(6)]
+JUMP_FRAMES = [(0, 0, 64, 64), (64, 0, 64, 68), (128, 0, 64, 74),
+               (192, 0, 64, 78), (256, 0, 64, 72), (320, 0, 64, 64)]
+ATTACK_FRAMES = [(i * 64, 0, 64, 64) for i in range(10)]
+IDLE_FRAMES = [(i * 64, 0, 64, 64) for i in range(4)]
+
+ANIMATIONS = [
+    ('idle', load_image('sprites/idle.png'), IDLE_FRAMES, 0.12),
+    ('walk', load_image('sprites/walk.png'), WALK_FRAMES, 0.10),
+    ('run', load_image('sprites/run.png'), RUN_FRAMES, 0.07),
+    ('jump', load_image('sprites/jump.png'), JUMP_FRAMES, 0.10),
+    ('attack', load_image('sprites/attack.png'), ATTACK_FRAMES, 0.06),
+]
+
 label = load_font('consola.ttf', 30)
 
 
-def draw_frame(sheet, index, x, y):
-    sheet.clip_draw(index * FRAME_W, 0, FRAME_W, FRAME_H,
-                    x, y, DRAW_W, DRAW_H)
+def draw_frame(sheet, frame, x, y):
+    left, bottom, w, h = frame
+    sheet.clip_draw(left, bottom, w, h, x, y, w * SCALE, h * SCALE)
 
+
+name, sheet, frames, interval = ANIMATIONS[0]
 
 index = 0
 while True:
     clear_canvas()
-    draw_frame(walk_sheet, index, 400, 300)
-    label.draw(400, 560, 'walk  frame %d / 8' % index, (255, 255, 255))
+    draw_frame(sheet, frames[index], 400, 300)
+    label.draw(400, 560, '%s  frame %d / %d' % (name, index + 1, len(frames)),
+               (255, 255, 255))
     update_canvas()
-    delay(0.1)
-    index = (index + 1) % 8
+    delay(interval)
+    index = (index + 1) % len(frames)
 
 
 close_canvas()
