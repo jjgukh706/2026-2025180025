@@ -8,6 +8,7 @@ from pico2d import *
 open_canvas(800, 600)
 
 SCALE = 5
+DRAW_H = 64 * SCALE
 REPEAT = 5
 PAUSE = 1.0
 
@@ -15,7 +16,10 @@ WALK_FRAMES = [(i * 64, 0, 64, 64) for i in range(8)]
 RUN_FRAMES = [(i * 64, 0, 64, 64) for i in range(6)]
 JUMP_FRAMES = [(0, 0, 64, 64), (64, 0, 64, 68), (128, 0, 64, 74),
                (192, 0, 64, 78), (256, 0, 64, 72), (320, 0, 64, 64)]
-ATTACK_FRAMES = [(i * 64, 0, 64, 64) for i in range(10)]
+ATTACK_FRAMES = [(0, 0, 85, 64), (85, 0, 89, 64), (174, 0, 89, 64),
+                 (263, 0, 100, 64), (363, 0, 107, 64), (470, 0, 103, 64),
+                 (573, 0, 94, 64), (667, 0, 87, 64), (754, 0, 83, 64),
+                 (837, 0, 82, 64)]
 IDLE_FRAMES = [(i * 64, 0, 64, 64) for i in range(4)]
 
 ANIMATIONS = [
@@ -31,7 +35,10 @@ label = load_font('consola.ttf', 30)
 
 def draw_frame(sheet, frame, x, y):
     left, bottom, w, h = frame
-    sheet.clip_draw(left, bottom, w, h, x, y, w * SCALE, h * SCALE)
+    draw_w = w * SCALE
+    draw_h = h * SCALE
+    sheet.clip_draw(left, bottom, w, h, x, y - (draw_h - DRAW_H) / 2,
+                    draw_w, draw_h)
 
 
 anim_index = 0
