@@ -30,8 +30,9 @@ def limb(draw, x0, y0, x1, y1, width, color):
 def draw_character(draw, w, h, pose):
     cx = w // 2
     ground = h - 4
-    hip_y = ground - 24
-    shoulder_y = ground - 42
+    rise = pose.get('rise', 0)
+    hip_y = ground - 24 - rise
+    shoulder_y = ground - 42 - rise
 
     leg_a_x, leg_a_lift = pose['leg_a']
     leg_b_x, leg_b_lift = pose['leg_b']
@@ -47,10 +48,10 @@ def draw_character(draw, w, h, pose):
     limb(draw, hip_x, hip_y, cx + leg_b_x, ground - leg_b_lift, 7, PANTS)
     limb(draw, hip_x, hip_y, cx + leg_a_x, ground - leg_a_lift, 7, PANTS)
 
-    draw.ellipse([cx + leg_a_x - 5, ground - leg_a_lift - 3,
-                  cx + leg_a_x + 5, ground - leg_a_lift + 3], fill=SHOE)
-    draw.ellipse([cx + leg_b_x - 5, ground - leg_b_lift - 3,
-                  cx + leg_b_x + 5, ground - leg_b_lift + 3], fill=SHOE)
+    draw.ellipse([cx + leg_a_x - 5, ground - leg_a_lift - 3 - rise,
+                  cx + leg_a_x + 5, ground - leg_a_lift + 3 - rise], fill=SHOE)
+    draw.ellipse([cx + leg_b_x - 5, ground - leg_b_lift - 3 - rise,
+                  cx + leg_b_x + 5, ground - leg_b_lift + 3 - rise], fill=SHOE)
 
     hand_a = (shoulder_x + arm_a_x, shoulder_y + 13 - arm_a_lift)
     hand_b = (shoulder_x + arm_b_x, shoulder_y + 13 - arm_b_lift)
@@ -168,6 +169,19 @@ def build_jump(total=6):
     return frames, sizes
 
 
+def idle_pose(i, total):
+    p = 2 * math.pi * i / total
+    bob = 1.2 * math.sin(p)
+    return {
+        'leg_a': (3, 0),
+        'leg_b': (-3, 0),
+        'arm_a': (5 + 1.5 * math.sin(p), 0),
+        'arm_b': (-5 - 1.5 * math.sin(p), 0),
+        'lean': 0,
+        'rise': bob,
+    }
+
+
 def build_attack(total=10):
     frames = []
     sizes = []
@@ -176,6 +190,18 @@ def build_attack(total=10):
         frame = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
         draw_character(ImageDraw.Draw(frame), FRAME_W, FRAME_H, pose)
         frames.append(frame)
+        sizes.append((FRAME_W, FRAME_H))
+    return frames, sizes
+
+
+def build_idle(total=4):
+    frames = []
+    sizes = []
+    for i in range(total):
+        pose = idle_pose(i, total)
+        body = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
+        draw_character(ImageDraw.Draw(body), FRAME_W, FRAME_H, pose)
+        frames.append(body)
         sizes.append((FRAME_W, FRAME_H))
     return frames, sizes
 
@@ -214,3 +240,12 @@ if __name__ == '__main__':
     elif target == 'attack':
         frames, sizes = build_attack()
         save_sheet('attack', frames, sizes)
+    elif target == 'idle':
+        frames, sizes = build_idle()
+        save_sheet('idle', frames, sizes)
+    elif target == 'all':
+        for name, builder in (('walk', build_walk), ('run', build_run),
+                              ('jump', build_jump), ('attack', build_attack),
+                              ('idle', build_idle)):
+            frames, sizes = builder()
+            save_sheet(name, frames, sizes)
