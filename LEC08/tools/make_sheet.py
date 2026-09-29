@@ -102,6 +102,20 @@ def build_walk(total=8):
     return frames, [(FRAME_W, FRAME_H)] * total
 
 
+JUMP_KEYS = [
+    {'leg_a': (6, 0), 'leg_b': (-6, 0), 'arm_a': (-4, 0), 'arm_b': (4, 0), 'lean': 0, 'rise': 0},
+    {'leg_a': (9, 6), 'leg_b': (-9, 6), 'arm_a': (-6, -6), 'arm_b': (6, -6), 'lean': 0, 'rise': 4},
+    {'leg_a': (5, 2), 'leg_b': (-5, 2), 'arm_a': (-8, -10), 'arm_b': (8, -10), 'lean': 0, 'rise': 10},
+    {'leg_a': (3, 4), 'leg_b': (-3, 4), 'arm_a': (-9, -13), 'arm_b': (9, -13), 'lean': 0, 'rise': 14},
+    {'leg_a': (7, 2), 'leg_b': (-7, 2), 'arm_a': (-5, -4), 'arm_b': (5, -4), 'lean': 0, 'rise': 8},
+    {'leg_a': (6, 0), 'leg_b': (-6, 0), 'arm_a': (-4, 0), 'arm_b': (4, 0), 'lean': 0, 'rise': 0},
+]
+
+
+def jump_pose(i, total):
+    return JUMP_KEYS[i % len(JUMP_KEYS)]
+
+
 def build_run(total=6):
     frames = []
     for i in range(total):
@@ -109,6 +123,22 @@ def build_run(total=6):
         draw_character(ImageDraw.Draw(frame), FRAME_W, FRAME_H, run_pose(i, total))
         frames.append(frame)
     return frames, [(FRAME_W, FRAME_H)] * total
+
+
+def build_jump(total=6):
+    frames = []
+    sizes = []
+    for i in range(total):
+        pose = jump_pose(i, total)
+        rise = int(pose['rise'])
+        size = (FRAME_W, FRAME_H + rise)
+        body = Image.new('RGBA', (FRAME_W, FRAME_H), (0, 0, 0, 0))
+        draw_character(ImageDraw.Draw(body), FRAME_W, FRAME_H, pose)
+        frame = Image.new('RGBA', size, (0, 0, 0, 0))
+        frame.paste(body, (0, rise), body)
+        frames.append(frame)
+        sizes.append(size)
+    return frames, sizes
 
 
 def save_sheet(name, frames, sizes):
@@ -139,3 +169,6 @@ if __name__ == '__main__':
     elif target == 'run':
         frames, sizes = build_run()
         save_sheet('run', frames, sizes)
+    elif target == 'jump':
+        frames, sizes = build_jump()
+        save_sheet('jump', frames, sizes)
