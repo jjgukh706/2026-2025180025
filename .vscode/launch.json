@@ -7,7 +7,22 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "cwd": "${fileDirname}"
+            "cwd": "${fileDirname}",
+            "justMyCode": false,
+            "python": [
+                "-Xfrozen_modules=off"
+            ]
+        },
+        {
+            "name": "Run Current File (no debugger)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${fileDirname}",
+            "python": [
+                "-Xfrozen_modules=off"
+            ]
         }
     ]
 }
