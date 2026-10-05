@@ -61,9 +61,9 @@ POSE_FRAMES = [
 
 ACTIONS = [
     ('Walk (걷기)', WALK_FRAMES, 0.10),
-    ('Run (달리기)', RUN_FRAMES, 0.08),
-    ('Sprint (대시)', DASH_FRAMES, 0.06),
-    ('Roll (점프/구르기)', ROLL_FRAMES, 0.08),
+    ('Run (달리기)', RUN_FRAMES, 0.07),
+    ('Sprint (대시)', DASH_FRAMES, 0.05),
+    ('Roll (점프/구르기)', ROLL_FRAMES, 0.07),
     ('Skid (제동)', SKID_FRAMES, 0.08),
     ('Push (밀기)', PUSH_FRAMES, 0.10),
     ('Spring (스프링 도약)', SPRING_FRAMES, 0.08),
