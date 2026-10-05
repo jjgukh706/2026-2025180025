@@ -102,7 +102,9 @@ while running:
     if pausing:
         delay(PAUSE_DURATION)
         pausing = False
+        # 10종 동작 순차 재생 후 1번 동작으로 무한 순환
         action_index = (action_index + 1) % len(ACTIONS)
+        print(f'[Action Switch] Now playing: {ACTIONS[action_index][0]}')
         frame_index = 0
         repeat_count = 0
     else:
