@@ -9,6 +9,7 @@ CENTER_X = CANVAS_W // 2
 CENTER_Y = CANVAS_H // 2
 SCALE = 4
 BASE_H = 39 * SCALE
+REPEAT_LIMIT = 5
 
 open_canvas(CANVAS_W, CANVAS_H)
 
@@ -27,7 +28,9 @@ def draw_frame(sheet, frame, x, y):
     sheet.clip_draw(left, bottom, w, h, x, y + y_offset, draw_w, draw_h)
 
 frame_index = 0
+repeat_count = 0
 running = True
+
 while running:
     clear_canvas()
     draw_frame(sheet, WALK_FRAMES[frame_index], CENTER_X, CENTER_Y)
@@ -40,7 +43,11 @@ while running:
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
 
-    frame_index = (frame_index + 1) % len(WALK_FRAMES)
+    frame_index += 1
+    if frame_index >= len(WALK_FRAMES):
+        frame_index = 0
+        repeat_count += 1
+
     delay(0.10)
 
 close_canvas()
