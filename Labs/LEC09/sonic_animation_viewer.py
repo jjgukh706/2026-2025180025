@@ -11,12 +11,19 @@ SCALE = 4
 
 open_canvas(CANVAS_W, CANVAS_H)
 
-# 스프라이트 시트 리소스 로드
 sheet = load_image('sonic-sprite.png')
+
+# 단일 테스트 프레임 (left, bottom, width, height)
+sample_frame = (1, 447, 29, 39)
+
+def draw_frame(sheet, frame, x, y):
+    left, bottom, w, h = frame
+    sheet.clip_draw(left, bottom, w, h, x, y, w * SCALE, h * SCALE)
 
 running = True
 while running:
     clear_canvas()
+    draw_frame(sheet, sample_frame, CENTER_X, CENTER_Y)
     update_canvas()
 
     events = get_events()
