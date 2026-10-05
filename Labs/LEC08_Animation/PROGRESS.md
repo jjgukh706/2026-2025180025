@@ -92,31 +92,33 @@ PIL로 캐릭터(머리·몸통·팔·다리·검)를 프레임마다 다른 포
 
 ---
 
-## 4. 커밋 기록 (Drill #8, 20개)
+## 4. 커밋 기록 (Drill #8, 20개 이상)
 
-| # | 커밋 메시지 |
-|---|---|
-| 1 | add LEC08 animation viewer progress document |
-| 2 | add sprite sheet tool and walk animation |
-| 3 | add run animation sprite sheet |
-| 4 | add jump animation with varying frame heights |
-| 5 | add attack animation with sword swing |
-| 6 | add idle animation and batch sheet build mode |
-| 7 | open canvas for animation viewer |
-| 8 | load walk sprite sheet |
-| 9 | add clip_draw helper and play walk frames |
-| 10 | add frame delay to walk animation |
-| 11 | scale character up to fill over half of screen |
-| 12 | show animation name and frame index on screen |
-| 13 | load run jump attack and idle sprite sheets |
-| 14 | collect animations into table with frame rectangles |
-| 15 | play animations in sequence and loop back to first |
-| 16 | repeat each animation 5 times with 1 second pause |
-| 17 | add sequence progress bar and escape key exit |
-| 18 | support per frame size for attack and jump sheets |
-| 19 | document bonus frame size and frame count support |
-| 20 | bundle font file and use absolute path for load_font |
-| 21 | extract layout constants for canvas position and progress bar |
+| # | 커밋 메시지 (한국어) | 원문 (English) |
+|---|---|---|
+| 1 | LEC08 애니메이션 뷰어 진행 문서 추가 | add LEC08 animation viewer progress document |
+| 2 | 스프라이트 시트 도구 및 걷기 애니메이션 추가 | add sprite sheet tool and walk animation |
+| 3 | 달리기 애니메이션 스프라이트 시트 추가 | add run animation sprite sheet |
+| 4 | 프레임 높이가 가변적인 점프 애니메이션 추가 | add jump animation with varying frame heights |
+| 5 | 검 휘두르기 공격 애니메이션 추가 | add attack animation with sword swing |
+| 6 | 대기 애니메이션 및 일괄 시트 생성 모드 추가 | add idle animation and batch sheet build mode |
+| 7 | 애니메이션 뷰어용 캔버스 생성 | open canvas for animation viewer |
+| 8 | 걷기 스프라이트 시트 로드 | load walk sprite sheet |
+| 9 | clip_draw 헬퍼 함수 추가 및 걷기 프레임 재생 | add clip_draw helper and play walk frames |
+| 10 | 걷기 애니메이션에 프레임 지연 시간 추가 | add frame delay to walk animation |
+| 11 | 캐릭터를 화면 절반 이상 크기로 확대 | scale character up to fill over half of screen |
+| 12 | 화면에 애니메이션 이름 및 프레임 번호 표시 | show animation name and frame index on screen |
+| 13 | 달리기, 점프, 공격, 대기 스프라이트 시트 로드 | load run jump attack and idle sprite sheets |
+| 14 | 애니메이션을 프레임 사각형 테이블 구조로 정리 | collect animations into table with frame rectangles |
+| 15 | 애니메이션 순차 재생 및 첫 동작 복귀 루프 구현 | play animations in sequence and loop back to first |
+| 16 | 동작별 5회 반복 및 1초 일시정지 추가 | repeat each animation 5 times with 1 second pause |
+| 17 | 전체 진행률 표시줄 및 ESC 키 종료 기능 추가 | add sequence progress bar and escape key exit |
+| 18 | 공격 및 점프 시트의 프레임별 가변 크기 지원 | support per frame size for attack and jump sheets |
+| 19 | 보너스 과제(가변 프레임 크기 및 프레임 수) 문서화 | document bonus frame size and frame count support |
+| 20 | 폰트 파일 번들링 및 load_font 절대 경로 적용 | bundle font file and use absolute path for load_font |
+| 21 | 캔버스 위치 및 진행률 표시줄 레이아웃 상수 추출 | extract layout constants for canvas position and progress bar |
+| 22 | 보너스 기능 세부 사항으로 진행 문서 업데이트 | update progress document with bonus feature details |
+| 23 | refactor: LEC08 작업 내용을 Labs/LEC08_Animation으로 이전 및 정리 | refactor: move LEC08 into Labs/LEC08_Animation |
 
 ---
 
