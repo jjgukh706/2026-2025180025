@@ -1,26 +1,35 @@
+"""
+[LEC09] 소닉 애니메이션 뷰어 (Sonic Animation Viewer)
+- 10종 동작, 총 76프레임 순차 재생
+- 각 동작 5회 반복 후 1초 일시정지
+- 10종 전체 무한 순환
+- 원본 스프라이트 4배 확대 렌더링
+- pico2d 라이브러리 기반 구현
+"""
+
 import os
 from pico2d import *
 
+# 작업 디렉터리를 스크립트 위치로 변경
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# 캔버스 및 레이아웃 설정
 CANVAS_W = 800
 CANVAS_H = 600
 CENTER_X = CANVAS_W // 2
 CENTER_Y = CANVAS_H // 2
 SCALE = 4
 BASE_H = 39 * SCALE
+
 REPEAT_LIMIT = 5
 PAUSE_DURATION = 1.0
+
 BAR_W = 600
 BAR_H = 12
 BAR_Y = 40
 
-open_canvas(CANVAS_W, CANVAS_H)
-
-sheet = load_image('sonic-sprite.png')
-font_path = os.path.abspath('../LEC08_Animation/fonts/consola.ttf')
-font = load_font(font_path, 22) if os.path.exists(font_path) else None
-
+# --- 10종 애니메이션 동작 데이터 (총 76프레임) ---
+# 형식: (left, bottom, width, height) - pico2d 기준점
 WALK_FRAMES = [
     (1, 447, 29, 39), (31, 447, 26, 39), (58, 447, 58, 39), (118, 447, 30, 39),
     (150, 447, 30, 39), (182, 447, 87, 39), (270, 447, 24, 39), (302, 447, 29, 39)
@@ -77,61 +86,75 @@ ACTIONS = [
     ('Pose (승리 포즈)', POSE_FRAMES, 0.12),
 ]
 
+
 def draw_frame(sheet, frame, x, y):
+    """프레임 사각형을 4배 확대하여 지면 접지면에 맞추어 렌더링"""
     left, bottom, w, h = frame
     draw_w = w * SCALE
     draw_h = h * SCALE
     y_offset = (draw_h - BASE_H) / 2
     sheet.clip_draw(left, bottom, w, h, x, y + y_offset, draw_w, draw_h)
 
-action_index = 0
-frame_index = 0
-repeat_count = 0
-pausing = False
-running = True
 
-while running:
-    name, frames, interval = ACTIONS[action_index]
+def main():
+    open_canvas(CANVAS_W, CANVAS_H)
+    sheet = load_image('sonic-sprite.png')
 
-    clear_canvas()
-    draw_frame(sheet, frames[frame_index], CENTER_X, CENTER_Y)
+    font_path = os.path.abspath('../LEC08_Animation/fonts/consola.ttf')
+    font = load_font(font_path, 22) if os.path.exists(font_path) else None
 
-    if font:
-        status_text = f"Action: {name} | Frame: {frame_index + 1}/{len(frames)} | Cycle: {repeat_count + 1}/{REPEAT_LIMIT}"
+    action_index = 0
+    frame_index = 0
+    repeat_count = 0
+    pausing = False
+    running = True
+
+    while running:
+        name, frames, interval = ACTIONS[action_index]
+
+        clear_canvas()
+        draw_frame(sheet, frames[frame_index], CENTER_X, CENTER_Y)
+
+        # 상태 텍스트 출력
+        if font:
+            status_text = f"Action: {name} | Frame: {frame_index + 1}/{len(frames)} | Cycle: {repeat_count + 1}/{REPEAT_LIMIT}"
+            if pausing:
+                status_text += " [PAUSED 1.0s]"
+            font.draw(CENTER_X - 250, CANVAS_H - 50, status_text, (255, 255, 255))
+
+        # 전체 진행 표시줄
+        total_actions = len(ACTIONS)
+        progress = (action_index + (repeat_count + (frame_index + 1) / len(frames)) / REPEAT_LIMIT) / total_actions
+        draw_rectangle(CENTER_X - BAR_W // 2, BAR_Y, CENTER_X + BAR_W // 2, BAR_Y + BAR_H, 60, 60, 60)
+        draw_rectangle(CENTER_X - BAR_W // 2, BAR_Y, CENTER_X - BAR_W // 2 + int(BAR_W * progress), BAR_Y + BAR_H, 0, 200, 120)
+
+        update_canvas()
+
+        for event in get_events():
+            if event.type == SDL_QUIT:
+                running = False
+            elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+                running = False
+
         if pausing:
-            status_text += " [PAUSED]"
-        font.draw(CENTER_X - 250, CANVAS_H - 50, status_text, (255, 255, 255))
-    # 전체 시퀀스 진행률 표시줄 렌더링
-    total_actions = len(ACTIONS)
-    progress = (action_index + (repeat_count + (frame_index + 1) / len(frames)) / REPEAT_LIMIT) / total_actions
-    draw_rectangle(CENTER_X - BAR_W // 2, BAR_Y, CENTER_X + BAR_W // 2, BAR_Y + BAR_H, 60, 60, 60)
-    draw_rectangle(CENTER_X - BAR_W // 2, BAR_Y, CENTER_X - BAR_W // 2 + int(BAR_W * progress), BAR_Y + BAR_H, 0, 200, 120)
-
-    update_canvas()
-
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            running = False
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
-
-    if pausing:
-        delay(PAUSE_DURATION)
-        pausing = False
-        # 10종 동작 순차 재생 후 1번 동작으로 무한 순환
-        action_index = (action_index + 1) % len(ACTIONS)
-        print(f'[Action Switch] Now playing: {ACTIONS[action_index][0]}')
-        frame_index = 0
-        repeat_count = 0
-    else:
-        delay(interval)
-        frame_index += 1
-        if frame_index >= len(frames):
+            delay(PAUSE_DURATION)
+            pausing = False
+            action_index = (action_index + 1) % len(ACTIONS)
+            print(f"[Action Switch] Now playing: {ACTIONS[action_index][0]}")
             frame_index = 0
-            repeat_count += 1
-            if repeat_count >= REPEAT_LIMIT:
-                pausing = True
-                frame_index = len(frames) - 1
+            repeat_count = 0
+        else:
+            delay(interval)
+            frame_index += 1
+            if frame_index >= len(frames):
+                frame_index = 0
+                repeat_count += 1
+                if repeat_count >= REPEAT_LIMIT:
+                    pausing = True
+                    frame_index = len(frames) - 1
 
-close_canvas()
+    close_canvas()
+
+
+if __name__ == '__main__':
+    main()
