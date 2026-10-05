@@ -14,7 +14,6 @@ open_canvas(CANVAS_W, CANVAS_H)
 
 sheet = load_image('sonic-sprite.png')
 
-# 1. 걷기(Walk) 8프레임 데이터 정의
 WALK_FRAMES = [
     (1, 447, 29, 39), (31, 447, 26, 39), (58, 447, 58, 39), (118, 447, 30, 39),
     (150, 447, 30, 39), (182, 447, 87, 39), (270, 447, 24, 39), (302, 447, 29, 39)
@@ -27,10 +26,11 @@ def draw_frame(sheet, frame, x, y):
     y_offset = (draw_h - BASE_H) / 2
     sheet.clip_draw(left, bottom, w, h, x, y + y_offset, draw_w, draw_h)
 
+frame_index = 0
 running = True
 while running:
     clear_canvas()
-    draw_frame(sheet, WALK_FRAMES[0], CENTER_X, CENTER_Y)
+    draw_frame(sheet, WALK_FRAMES[frame_index], CENTER_X, CENTER_Y)
     update_canvas()
 
     events = get_events()
@@ -40,6 +40,7 @@ while running:
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
 
-    delay(0.05)
+    frame_index = (frame_index + 1) % len(WALK_FRAMES)
+    delay(0.10)
 
 close_canvas()
