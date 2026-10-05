@@ -15,6 +15,8 @@ PAUSE_DURATION = 1.0
 open_canvas(CANVAS_W, CANVAS_H)
 
 sheet = load_image('sonic-sprite.png')
+font_path = os.path.abspath('../LEC08_Animation/fonts/consola.ttf')
+font = load_font(font_path, 22) if os.path.exists(font_path) else None
 
 WALK_FRAMES = [
     (1, 447, 29, 39), (31, 447, 26, 39), (58, 447, 58, 39), (118, 447, 30, 39),
@@ -90,6 +92,12 @@ while running:
 
     clear_canvas()
     draw_frame(sheet, frames[frame_index], CENTER_X, CENTER_Y)
+
+    if font:
+        status_text = f"Action: {name} | Frame: {frame_index + 1}/{len(frames)} | Cycle: {repeat_count + 1}/{REPEAT_LIMIT}"
+        if pausing:
+            status_text += " [PAUSED]"
+        font.draw(CENTER_X - 250, CANVAS_H - 50, status_text, (255, 255, 255))
     update_canvas()
 
     events = get_events()
