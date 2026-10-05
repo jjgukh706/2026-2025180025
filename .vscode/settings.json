@@ -1,3 +1,9 @@
 {
-    "python.terminal.executeInFileDir": true
+    "python.terminal.executeInFileDir": true,
+    "python.defaultInterpreterPath": "C:/Exe_Python/Python_3.13.2_64/python.exe",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingModuleSource": "none"
+    },
+    "debugpy.debugJustMyCode": false,
+    "files.encoding": "utf8"
 }
