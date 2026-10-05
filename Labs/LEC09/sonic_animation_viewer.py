@@ -3,7 +3,6 @@ from pico2d import *
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-# 캔버스 및 레이아웃 상수 정의
 CANVAS_W = 800
 CANVAS_H = 600
 CENTER_X = CANVAS_W // 2
@@ -11,6 +10,9 @@ CENTER_Y = CANVAS_H // 2
 SCALE = 4
 
 open_canvas(CANVAS_W, CANVAS_H)
+
+# 스프라이트 시트 리소스 로드
+sheet = load_image('sonic-sprite.png')
 
 running = True
 while running:
