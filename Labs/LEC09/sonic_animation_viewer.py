@@ -11,6 +11,9 @@ SCALE = 4
 BASE_H = 39 * SCALE
 REPEAT_LIMIT = 5
 PAUSE_DURATION = 1.0
+BAR_W = 600
+BAR_H = 12
+BAR_Y = 40
 
 open_canvas(CANVAS_W, CANVAS_H)
 
@@ -98,6 +101,12 @@ while running:
         if pausing:
             status_text += " [PAUSED]"
         font.draw(CENTER_X - 250, CANVAS_H - 50, status_text, (255, 255, 255))
+    # 전체 시퀀스 진행률 표시줄 렌더링
+    total_actions = len(ACTIONS)
+    progress = (action_index + (repeat_count + (frame_index + 1) / len(frames)) / REPEAT_LIMIT) / total_actions
+    draw_rectangle(CENTER_X - BAR_W // 2, BAR_Y, CENTER_X + BAR_W // 2, BAR_Y + BAR_H, 60, 60, 60)
+    draw_rectangle(CENTER_X - BAR_W // 2, BAR_Y, CENTER_X - BAR_W // 2 + int(BAR_W * progress), BAR_Y + BAR_H, 0, 200, 120)
+
     update_canvas()
 
     events = get_events()
