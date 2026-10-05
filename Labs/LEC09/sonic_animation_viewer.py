@@ -14,20 +14,23 @@ open_canvas(CANVAS_W, CANVAS_H)
 
 sheet = load_image('sonic-sprite.png')
 
-sample_frame = (1, 447, 29, 39)
+# 1. 걷기(Walk) 8프레임 데이터 정의
+WALK_FRAMES = [
+    (1, 447, 29, 39), (31, 447, 26, 39), (58, 447, 58, 39), (118, 447, 30, 39),
+    (150, 447, 30, 39), (182, 447, 87, 39), (270, 447, 24, 39), (302, 447, 29, 39)
+]
 
 def draw_frame(sheet, frame, x, y):
     left, bottom, w, h = frame
     draw_w = w * SCALE
     draw_h = h * SCALE
-    # 발바닥 접지면 유지를 위한 높이 차이 보정
     y_offset = (draw_h - BASE_H) / 2
     sheet.clip_draw(left, bottom, w, h, x, y + y_offset, draw_w, draw_h)
 
 running = True
 while running:
     clear_canvas()
-    draw_frame(sheet, sample_frame, CENTER_X, CENTER_Y)
+    draw_frame(sheet, WALK_FRAMES[0], CENTER_X, CENTER_Y)
     update_canvas()
 
     events = get_events()
