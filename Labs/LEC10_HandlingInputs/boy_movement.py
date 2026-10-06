@@ -15,6 +15,7 @@ FRAME_W, FRAME_H = 100, 100    # 프레임 한 장 크기
 N_FRAMES = 8                   # 행당 프레임 수
 ROW_IDLE = 200                 # 대기(Idle) 애니메이션 행
 ROW_RUN = 100                  # 달리기(Run) 애니메이션 행 (스타터 코드의 y=100 행과 일치)
+CHAR_W, CHAR_H = 70, 70        # 캐릭터 출력(표시) 크기 - 100x100 원본을 축소해 출력
 
 # ---------- 캐릭터 상태 ----------
 x = CANVAS_W // 2              # 캐릭터 중심 x
@@ -72,8 +73,8 @@ def update():
     y += dy * MOVE_SPEED
 
     # 화면 경계 제한: 캐릭터 중심이 화면 밖으로 나가지 않는다.
-    gap_x = FRAME_W // 2
-    gap_y = FRAME_H // 2
+    gap_x = CHAR_W // 2
+    gap_y = CHAR_H // 2
     x = max(gap_x, min(x, CANVAS_W - gap_x))
     y = max(gap_y, min(y, CANVAS_H - gap_y))
 
@@ -99,7 +100,7 @@ def draw():
     else:                             # RUN_LEFT
         row, flip = ROW_RUN, 'h'      # 왼쪽 이동: RUN 행 좌우 반전
 
-    boy.clip_composite_draw(frame * FRAME_W, row, FRAME_W, FRAME_H, 0, flip, x, y)
+    boy.clip_composite_draw(frame * FRAME_W, row, FRAME_W, FRAME_H, 0, flip, x, y, CHAR_W, CHAR_H)
     update_canvas()
 
 
