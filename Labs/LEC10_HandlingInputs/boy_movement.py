@@ -1,3 +1,11 @@
+"""소년 상하좌우 이동 및 방향 바꾸기 (LEC10)
+
+- 상/하/좌/우 방향키로 소년을 이동시키고 IDLE/달리기 애니메이션을 전환한다.
+- 이동 방향에 따라 왼쪽(RUN_LEFT)은 clip_composite_draw의 flip='h'로 좌우 반전한다.
+- 위/아래 이동 중에는 마지막 좌우 방향(dir)을 유지한다.
+- 화면 경계에 도달하면 애니메이션은 유지한 채 이동만 멈춘다.
+"""
+
 from pico2d import *
 
 CANVAS_W, CANVAS_H = 800, 600
@@ -85,11 +93,11 @@ def draw():
         action = 'IDLE'
 
     if action == 'IDLE':
-        row, flip = ROW_IDLE, ''
+        row, flip = ROW_IDLE, ''      # 정지: IDLE 행
     elif action == 'RUN_RIGHT':
-        row, flip = ROW_RUN, ''
-    else:
-        row, flip = ROW_RUN, 'h'
+        row, flip = ROW_RUN, ''       # 오른쪽 이동: RUN 행, 원본 방향
+    else:                             # RUN_LEFT
+        row, flip = ROW_RUN, 'h'      # 왼쪽 이동: RUN 행 좌우 반전
 
     boy.clip_composite_draw(frame * FRAME_W, row, FRAME_W, FRAME_H, 0, flip, x, y)
     update_canvas()
