@@ -67,17 +67,22 @@ def draw():
     clear_canvas()
     ground.draw(CANVAS_W // 2, CANVAS_H // 2, CANVAS_W, CANVAS_H)
 
-    if dir > 0:
+    moving = left_key or right_key
+    if moving and dir > 0:
         action = 'RUN_RIGHT'
-    else:
+    elif moving and dir < 0:
         action = 'RUN_LEFT'
-
-    if action == 'RUN_RIGHT':
-        flip = ''
     else:
-        flip = 'h'
+        action = 'IDLE'
 
-    boy.clip_composite_draw(frame * FRAME_W, ROW_RUN, FRAME_W, FRAME_H, 0, flip, x, y)
+    if action == 'IDLE':
+        row, flip = ROW_IDLE, ''
+    elif action == 'RUN_RIGHT':
+        row, flip = ROW_RUN, ''
+    else:
+        row, flip = ROW_RUN, 'h'
+
+    boy.clip_composite_draw(frame * FRAME_W, row, FRAME_W, FRAME_H, 0, flip, x, y)
     update_canvas()
 
 
