@@ -62,6 +62,13 @@ def update():
     dy = int(up_key) - int(down_key)
     x += dx * MOVE_SPEED
     y += dy * MOVE_SPEED
+
+    # 화면 경계 제한: 캐릭터 중심이 화면 밖으로 나가지 않는다.
+    gap_x = FRAME_W // 2
+    gap_y = FRAME_H // 2
+    x = max(gap_x, min(x, CANVAS_W - gap_x))
+    y = max(gap_y, min(y, CANVAS_H - gap_y))
+
     frame = (frame + 1) % N_FRAMES
 
 
