@@ -15,6 +15,7 @@ frame = 0                      # 재생 중인 프레임 번호
 
 # ---------- 이동 상태 ----------
 MOVE_SPEED = 5                 # 프레임당 이동 거리
+dir = 1                        # 바라보는 방향: -1 왼쪽, +1 오른쪽
 left_key = right_key = up_key = down_key = False
 
 
@@ -24,7 +25,7 @@ boy = load_image('animation_sheet.png')
 
 
 def handle_events():
-    global running, left_key, right_key, up_key, down_key
+    global running, left_key, right_key, up_key, down_key, dir
 
     events = get_events()
     for event in events:
@@ -35,8 +36,10 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_LEFT:
                 left_key = True
+                dir = -1
             elif event.key == SDLK_RIGHT:
                 right_key = True
+                dir = 1
             elif event.key == SDLK_UP:
                 up_key = True
             elif event.key == SDLK_DOWN:
@@ -53,15 +56,28 @@ def handle_events():
 
 
 def update():
-    global frame
+    global x, frame
 
+    dx = int(right_key) - int(left_key)
+    x += dx * MOVE_SPEED
     frame = (frame + 1) % N_FRAMES
 
 
 def draw():
     clear_canvas()
     ground.draw(CANVAS_W // 2, CANVAS_H // 2, CANVAS_W, CANVAS_H)
-    boy.clip_draw(frame * FRAME_W, ROW_RUN, FRAME_W, FRAME_H, x, y)
+
+    if dir > 0:
+        action = 'RUN_RIGHT'
+    else:
+        action = 'RUN_LEFT'
+
+    if action == 'RUN_RIGHT':
+        flip = ''
+    else:
+        flip = 'h'
+
+    boy.clip_composite_draw(frame * FRAME_W, ROW_RUN, FRAME_W, FRAME_H, 0, flip, x, y)
     update_canvas()
 
 
