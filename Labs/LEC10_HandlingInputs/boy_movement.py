@@ -23,7 +23,7 @@ y = CANVAS_H // 2              # 캐릭터 중심 y
 frame = 0                      # 재생 중인 프레임 번호
 
 # ---------- 이동 상태 ----------
-MOVE_SPEED = 5                 # 프레임당 이동 거리
+MOVE_SPEED = 6                 # 프레임당 이동 거리
 dir = 1                        # 바라보는 방향: -1 왼쪽, +1 오른쪽
 left_key = right_key = up_key = down_key = False
 
