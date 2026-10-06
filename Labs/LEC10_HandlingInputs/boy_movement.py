@@ -56,10 +56,12 @@ def handle_events():
 
 
 def update():
-    global x, frame
+    global x, y, frame
 
     dx = int(right_key) - int(left_key)
+    dy = int(up_key) - int(down_key)
     x += dx * MOVE_SPEED
+    y += dy * MOVE_SPEED
     frame = (frame + 1) % N_FRAMES
 
 
@@ -67,7 +69,7 @@ def draw():
     clear_canvas()
     ground.draw(CANVAS_W // 2, CANVAS_H // 2, CANVAS_W, CANVAS_H)
 
-    moving = left_key or right_key
+    moving = left_key or right_key or up_key or down_key
     if moving and dir > 0:
         action = 'RUN_RIGHT'
     elif moving and dir < 0:
